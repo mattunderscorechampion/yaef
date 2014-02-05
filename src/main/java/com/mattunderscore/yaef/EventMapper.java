@@ -22,19 +22,22 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+
 package com.mattunderscore.yaef;
 
+import java.util.Collection;
+
 /**
- * A listener that filters according to type.
- * @author Matt Champion on 04/02/14.
+ * Mapper for events to some object. This provides an inverse of the behaviour of filters. Instead of events that
+ * do not apply being dropped only the objects that the event applies to are returned.
+ * @param <T> The type of objects returned by the mapper.
+ * @author matt on 05/02/14.
  */
-public final class TypedEventListener<T extends Event> extends FilteredEventListener {
+public interface EventMapper<T> {
     /**
-     * Create a listener that is only invoked for certain types.
-     * @param type The type to filter on.
-     * @param listener The listener to pass the event onto,
+     * Get the listeners that are mapped to for an event.
+     * @param event An event to get listeners for.
+     * @return A collection of listeners that can be applied to the event.
      */
-    public TypedEventListener(final Class<T> type, final EventListener listener) {
-        super(new EventTypeFilter(type), listener);
-    }
+    Collection<T> objectsForEvent(Event event);
 }

@@ -22,52 +22,63 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+
 package com.mattunderscore.yaef;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import com.mattunderscore.yaef.com.mattunderscore.yaef.stubs.EventA;
 import com.mattunderscore.yaef.com.mattunderscore.yaef.stubs.EventASubclass;
 import com.mattunderscore.yaef.com.mattunderscore.yaef.stubs.EventB;
-import org.junit.Test;
+import org.junit.Before;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests for type filter.
- * @author Matt Champion on 04/02/14.
+ * @author Matt Champion on 05/02/14.
  */
-public final class EventTypeFilterTest {
-    @Test
-    public void correctTypeAccepted0() {
-        final EventTypeFilter filter = new EventTypeFilter(EventA.class);
+public final class TypedEventListenerTest {
+    private EventListener mockedListener;
+
+    @Before
+    public void setUp() {
+        mockedListener = mock(EventListener.class);
+    }
+
+    public void correctTypePassedOn0() {
+        final TypedEventListener listener = new TypedEventListener(EventA.class, mockedListener);
         final Event event = new EventA();
-        assertTrue("Filter must accept events of the type passed in", filter.accept(event));
+        listener.onEvent(event);
+        verify(mockedListener).onEvent(event);
     }
 
-    @Test
-    public void correctTypeAccepted1() {
-        final EventTypeFilter filter = new EventTypeFilter(EventB.class);
+    public void correctTypePassedOn1() {
+        final TypedEventListener listener = new TypedEventListener(EventB.class, mockedListener);
         final Event event = new EventB();
-        assertTrue("Filter must accept events of the type passed in", filter.accept(event));
+        listener.onEvent(event);
+        verify(mockedListener).onEvent(event);
     }
 
-    @Test
-    public void incorrectTypeNotAccepted0() {
-        final EventTypeFilter filter = new EventTypeFilter(EventA.class);
+    public void incorrectTypeDropped0() {
+        final TypedEventListener listener = new TypedEventListener(EventA.class, mockedListener);
         final Event event = new EventB();
-        assertFalse("Filter must not accept events different to the type passed in", filter.accept(event));
+        listener.onEvent(event);
+        verify(mockedListener, never()).onEvent(any(Event.class));
     }
 
-    @Test
-    public void incorrectTypeNotAccepted1() {
-        final EventTypeFilter filter = new EventTypeFilter(EventB.class);
+    public void incorrectTypeDropped1() {
+        final TypedEventListener listener = new TypedEventListener(EventB.class, mockedListener);
         final Event event = new EventA();
-        assertFalse("Filter must not accept events different to the type passed in", filter.accept(event));
+        listener.onEvent(event);
+        verify(mockedListener, never()).onEvent(any(Event.class));
     }
 
-    @Test
-    public void subTypeOfCorrectAccepted() {
-        final EventTypeFilter filter = new EventTypeFilter(EventA.class);
+    public void subTypeOfCorrectPassedOn() {
+        final TypedEventListener listener = new TypedEventListener(EventA.class, mockedListener);
         final Event event = new EventASubclass();
-        assertTrue("Filter must accept events of a subclass of the type passed in", filter.accept(event));
+        listener.onEvent(event);
+        verify(mockedListener).onEvent(event);
     }
 }

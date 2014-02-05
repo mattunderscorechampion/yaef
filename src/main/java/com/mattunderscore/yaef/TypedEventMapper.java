@@ -22,19 +22,17 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+
 package com.mattunderscore.yaef;
 
 /**
- * A listener that filters according to type.
- * @author Matt Champion on 04/02/14.
+ * An event mapper from the type of an event to an object.
+ * @param <T> The type of object to map to.
+ * @author matt on 05/02/14.
  */
-public final class TypedEventListener<T extends Event> extends FilteredEventListener {
-    /**
-     * Create a listener that is only invoked for certain types.
-     * @param type The type to filter on.
-     * @param listener The listener to pass the event onto,
-     */
-    public TypedEventListener(final Class<T> type, final EventListener listener) {
-        super(new EventTypeFilter(type), listener);
+public class TypedEventMapper<T> extends AbstractEventMapper<Class<? extends Event>, T> {
+    @Override
+    protected Class<? extends Event> getKeyFromEvent(final Event event) {
+        return event.getClass();
     }
 }

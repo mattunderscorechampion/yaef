@@ -22,19 +22,31 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+
 package com.mattunderscore.yaef;
 
 /**
- * A listener that filters according to type.
+ * A listener that applies a filter.
  * @author Matt Champion on 04/02/14.
  */
-public final class TypedEventListener<T extends Event> extends FilteredEventListener {
+public class FilteredEventListener implements EventListener {
+    private final EventFilter filter;
+    private final EventListener listener;
+
     /**
-     * Create a listener that is only invoked for certain types.
-     * @param type The type to filter on.
-     * @param listener The listener to pass the event onto,
+     * Create a listener that is filtered..
+     * @param filter The filter to apply.
+     * @param listener The listener to pass accepted events to.
      */
-    public TypedEventListener(final Class<T> type, final EventListener listener) {
-        super(new EventTypeFilter(type), listener);
+    public FilteredEventListener(final EventFilter filter, final EventListener listener) {
+        this.filter = filter;
+        this.listener = listener;
+    }
+
+    @Override
+    public final void onEvent(final Event event) {
+        if (filter.accept(event)) {
+            listener.onEvent(event);
+        }
     }
 }
