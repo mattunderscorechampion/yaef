@@ -30,7 +30,7 @@ package com.mattunderscore.yaef;
  * @param <T> The type of object to map to.
  * @author matt on 05/02/14.
  */
-public class TypedEventMapper<T> extends AbstractEventMapper<Class<? extends Event>, T> {
+public class EventTypeMapper<T> extends AbstractEventMapper<Class<? extends Event>, T> {
     @Override
     protected Class<? extends Event> getKeyFromEvent(final Event event) {
         return event.getClass();
