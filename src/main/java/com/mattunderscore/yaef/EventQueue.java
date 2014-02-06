@@ -6,13 +6,14 @@ package com.mattunderscore.yaef;
  */
 public interface EventQueue {
     /**
-     * Add an event to the queue.
+     * Add an event to the queue if it can be done so immediately.
      * @param event An event to add.
+     * @return {@code true} iff the event was added.
      */
-    void add(Event event);
+    boolean offer(Event event);
 
     /**
-     * Remove an event from the queue.
+     * Remove and return an event from the queue.
      * @return An event from the queue or null.
      */
     Event poll();
