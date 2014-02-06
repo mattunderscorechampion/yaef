@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * key will be included in the listeners.
  * @author matt on 06/02/14.
  */
-public class EventTypeMapper<T> implements MutableEventMapper<Class<? extends Event>, T> {
+public final class EventTypeMapper<T> implements MutableEventMapper<Class<? extends Event>, T> {
     private final ConcurrentHashMap<Class<?>,Collection<T>> map = new ConcurrentHashMap<Class<?>, Collection<T>>();
 
     @Override
@@ -50,7 +50,7 @@ public class EventTypeMapper<T> implements MutableEventMapper<Class<? extends Ev
     public Collection<T> objectsForEvent(final Event event) {
         final Class<? extends Event> eventClass = event.getClass();
         final Set<T> objects = new HashSet<>();
-        final List<Class<?>> possibleKeys = getPossibleKeys(eventClass);
+        final List<Class<?>> possibleKeys = getSuperTypesThatImplementEvent(eventClass);
         for (final Class<?> key : possibleKeys) {
             final Collection<T> typeObjects = map.get(key);
             if (typeObjects != null) {
@@ -65,7 +65,7 @@ public class EventTypeMapper<T> implements MutableEventMapper<Class<? extends Ev
      * @param klass The class to search from.
      * @return The list of classes.
      */
-    static List<Class<?>> getPossibleKeys(final Class<? extends Event> klass) {
+    static List<Class<?>> getSuperTypesThatImplementEvent(final Class<? extends Event> klass) {
         final List<Class<?>> possibleKeys = new ArrayList<>();
         if (isEventType(klass)) {
             addTypesToEvent(possibleKeys, klass);
@@ -76,13 +76,13 @@ public class EventTypeMapper<T> implements MutableEventMapper<Class<? extends Ev
     private static void addTypesToEvent(final List<Class<?>> list, final Class<?> klass) {
         list.add(klass);
         final Class<?> superClass = klass.getSuperclass();
-        if (isEventType(superClass)) {
+        if (superClass != null && isEventType(superClass)) {
             addTypesToEvent(list, superClass);
         }
         final Class<?>[] interfaces = klass.getInterfaces();
         for (final Class<?> intFace : interfaces) {
             if (isEventType(intFace)) {
-                addTypesToEvent(list, superClass);
+                addTypesToEvent(list, intFace);
             }
         }
     }

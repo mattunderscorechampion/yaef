@@ -25,8 +25,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.mattunderscore.yaef.com.mattunderscore.yaef.stubs;
 
+import com.mattunderscore.yaef.Event;
+
 /**
  * @author matt on 06/02/14.
  */
-public interface InterestingEvent {
+public interface InterestingEvent extends Event {
 }

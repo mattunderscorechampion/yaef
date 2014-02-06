@@ -28,5 +28,5 @@ package com.mattunderscore.yaef.com.mattunderscore.yaef.stubs;
 /**
  * @author matt on 06/02/14.
  */
-public class InterestingEventA {
+public class InterestingEventA implements InterestingEvent {
 }
