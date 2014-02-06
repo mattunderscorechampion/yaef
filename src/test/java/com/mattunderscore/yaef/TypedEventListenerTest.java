@@ -29,6 +29,7 @@ import com.mattunderscore.yaef.com.mattunderscore.yaef.stubs.EventA;
 import com.mattunderscore.yaef.com.mattunderscore.yaef.stubs.EventASubclass;
 import com.mattunderscore.yaef.com.mattunderscore.yaef.stubs.EventB;
 import org.junit.Before;
+import org.junit.Test;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -47,6 +48,7 @@ public final class TypedEventListenerTest {
         mockedListener = mock(EventListener.class);
     }
 
+    @Test
     public void correctTypePassedOn0() {
         final TypedEventListener listener = new TypedEventListener(EventA.class, mockedListener);
         final Event event = new EventA();
@@ -54,6 +56,7 @@ public final class TypedEventListenerTest {
         verify(mockedListener).onEvent(event);
     }
 
+    @Test
     public void correctTypePassedOn1() {
         final TypedEventListener listener = new TypedEventListener(EventB.class, mockedListener);
         final Event event = new EventB();
@@ -61,6 +64,7 @@ public final class TypedEventListenerTest {
         verify(mockedListener).onEvent(event);
     }
 
+    @Test
     public void incorrectTypeDropped0() {
         final TypedEventListener listener = new TypedEventListener(EventA.class, mockedListener);
         final Event event = new EventB();
@@ -68,6 +72,7 @@ public final class TypedEventListenerTest {
         verify(mockedListener, never()).onEvent(any(Event.class));
     }
 
+    @Test
     public void incorrectTypeDropped1() {
         final TypedEventListener listener = new TypedEventListener(EventB.class, mockedListener);
         final Event event = new EventA();
@@ -75,6 +80,7 @@ public final class TypedEventListenerTest {
         verify(mockedListener, never()).onEvent(any(Event.class));
     }
 
+    @Test
     public void subTypeOfCorrectPassedOn() {
         final TypedEventListener listener = new TypedEventListener(EventA.class, mockedListener);
         final Event event = new EventASubclass();
