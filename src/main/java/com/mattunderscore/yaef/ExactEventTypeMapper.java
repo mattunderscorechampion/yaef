@@ -26,11 +26,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.mattunderscore.yaef;
 
 /**
- * An event mapper from the type of an event to an object.
+ * An event mapper from the type of an event to an object. This mapper works only on exactly matching types.
  * @param <T> The type of object to map to.
  * @author matt on 05/02/14.
  */
-public class EventTypeMapper<T> extends AbstractEventMapper<Class<? extends Event>, T> {
+public class ExactEventTypeMapper<T> extends AbstractEventMapper<Class<? extends Event>, T> {
     @Override
     protected Class<? extends Event> getKeyFromEvent(final Event event) {
         return event.getClass();

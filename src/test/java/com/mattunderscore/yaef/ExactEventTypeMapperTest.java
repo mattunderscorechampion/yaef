@@ -39,10 +39,10 @@ import static org.junit.Assert.assertTrue;
  * Unit tests for TypedEventMapper.
  * @author matt on 05/02/14.
  */
-public final class EventTypeMapperTest {
+public final class ExactEventTypeMapperTest {
     @Test
     public void correctTypeMapsToObject() {
-        final EventTypeMapper<Object> mapper = new EventTypeMapper<Object>();
+        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<Object>();
         final Object object0 = new Object();
         mapper.addMapping(EventA.class, object0);
 
@@ -53,7 +53,7 @@ public final class EventTypeMapperTest {
 
     @Test
     public void correctTypeMapsToObjects() {
-        final EventTypeMapper<Object> mapper = new EventTypeMapper<Object>();
+        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<Object>();
         final Object object0 = new Object();
         final Object object1 = new Object();
         mapper.addMapping(EventA.class, object0);
@@ -67,7 +67,7 @@ public final class EventTypeMapperTest {
 
     @Test
     public void incorrectTypeMapsToEmptyCollection() {
-        final EventTypeMapper<Object> mapper = new EventTypeMapper<Object>();
+        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<Object>();
         final Object object0 = new Object();
         mapper.addMapping(EventA.class, object0);
 
@@ -77,7 +77,7 @@ public final class EventTypeMapperTest {
 
     @Test
     public void typeMapsToSubsetOfMappings() {
-        final EventTypeMapper<Object> mapper = new EventTypeMapper<Object>();
+        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<Object>();
         final Object object0 = new Object();
         final Object object1 = new Object();
         mapper.addMapping(EventA.class, object0);
