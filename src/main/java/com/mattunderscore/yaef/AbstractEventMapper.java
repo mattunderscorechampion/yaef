@@ -27,7 +27,6 @@ package com.mattunderscore.yaef;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -36,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <T> The type of the object to map to.
  * @author matt on 05/02/14.
  */
-public abstract class AbstractEventMapper<S, T> implements KeyedEventMapper<S, T> {
+public abstract class AbstractEventMapper<S, T> implements MutableEventMapper<S, T> {
     private final ConcurrentHashMap<S,Collection<T>> map = new ConcurrentHashMap<S, Collection<T>>();
 
     @Override
