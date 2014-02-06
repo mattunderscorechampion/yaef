@@ -60,7 +60,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author matt on 05/02/14.
  */
 public abstract class AbstractEventMapper<S, T> implements MutableEventMapper<S, T> {
-    private final ConcurrentHashMap<S,Collection<T>> map = new ConcurrentHashMap<S, Collection<T>>();
+    private final ConcurrentHashMap<S,Collection<T>> map = new ConcurrentHashMap<>();
 
     @Override
     public final void addMapping(S key, T value) {

@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 public final class ExactEventTypeMapperTest {
     @Test
     public void correctTypeMapsToObject() {
-        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<Object>();
+        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<>();
         final Object object0 = new Object();
         mapper.addMapping(EventA.class, object0);
 
@@ -53,7 +53,7 @@ public final class ExactEventTypeMapperTest {
 
     @Test
     public void correctTypeMapsToObjects() {
-        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<Object>();
+        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<>();
         final Object object0 = new Object();
         final Object object1 = new Object();
         mapper.addMapping(EventA.class, object0);
@@ -67,7 +67,7 @@ public final class ExactEventTypeMapperTest {
 
     @Test
     public void incorrectTypeMapsToEmptyCollection() {
-        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<Object>();
+        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<>();
         final Object object0 = new Object();
         mapper.addMapping(EventA.class, object0);
 
@@ -77,7 +77,7 @@ public final class ExactEventTypeMapperTest {
 
     @Test
     public void typeMapsToSubsetOfMappings() {
-        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<Object>();
+        final ExactEventTypeMapper<Object> mapper = new ExactEventTypeMapper<>();
         final Object object0 = new Object();
         final Object object1 = new Object();
         mapper.addMapping(EventA.class, object0);
