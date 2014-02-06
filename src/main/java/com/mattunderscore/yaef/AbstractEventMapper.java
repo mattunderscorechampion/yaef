@@ -42,9 +42,9 @@ public abstract class AbstractEventMapper<S, T> implements MutableEventMapper<S,
     public final void addMapping(S key, T value) {
         final Collection<T> collection = Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
         collection.add(value);
-        final Collection<T> exisitingCollection = map.putIfAbsent(key, collection);
-        if (exisitingCollection != null) {
-            exisitingCollection.add(value);
+        final Collection<T> existingCollection = map.putIfAbsent(key, collection);
+        if (existingCollection != null) {
+            existingCollection.add(value);
         }
     }
 
