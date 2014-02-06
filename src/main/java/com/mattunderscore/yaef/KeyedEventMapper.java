@@ -25,46 +25,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.mattunderscore.yaef;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
- * Abstract mapping implementation. The key of the mapping must be derived from an Event object.
- * @param <S> The type of the key to map from.
- * @param <T> The type of the object to map to.
- * @author matt on 05/02/14.
+ * Allows a mapping to be added from some key to some object.
+ * @author matt on 06/02/14.
  */
-public abstract class AbstractEventMapper<S, T> implements KeyedEventMapper<S, T> {
-    private final ConcurrentHashMap<S,Collection<T>> map = new ConcurrentHashMap<S, Collection<T>>();
-
-    @Override
-    public final void addMapping(S key, T value) {
-        final Collection<T> collection = Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
-        collection.add(value);
-        final Collection<T> exisitingCollection = map.putIfAbsent(key, collection);
-        if (exisitingCollection != null) {
-            exisitingCollection.add(value);
-        }
-    }
-
-    @Override
-    public final Collection<T> objectsForEvent(final Event event) {
-        final S key = getKeyFromEvent(event);
-        final Collection<T> collection = map.get(key);
-        if (collection == null) {
-            return Collections.emptySet();
-        }
-        else {
-            return collection;
-        }
-    }
-
+public interface KeyedEventMapper<S, T> extends EventMapper<T> {
     /**
-     * Obtain a key from the event.
-     * @param event The event to get the key from.
-     * @return The key for the event.
+     * Add a mapping from a key to an object.
+     * @param key The key to map from.
+     * @param value The object to map to.
      */
-    protected abstract S getKeyFromEvent(final Event event);
+    void addMapping(S key, T value);
 }
