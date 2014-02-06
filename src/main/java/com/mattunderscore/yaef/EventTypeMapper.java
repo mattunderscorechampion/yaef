@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author matt on 06/02/14.
  */
 public final class EventTypeMapper<T> implements MutableEventMapper<Class<? extends Event>, T> {
-    private final ConcurrentHashMap<Class<?>,Collection<T>> map = new ConcurrentHashMap<Class<?>, Collection<T>>();
+    private final ConcurrentHashMap<Class<?>,Collection<T>> map = new ConcurrentHashMap<>();
 
     @Override
     public void addMapping(final Class<? extends Event> key, final T value) {
