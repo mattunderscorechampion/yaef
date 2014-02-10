@@ -26,13 +26,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.mattunderscore.yaef;
 
 /**
- * A listener for events.
- * @author Matt Champion on 04/02/14.
+ * An event bus that dispatches events to listeners.
+ * @author matt on 07/02/14.
  */
-public interface EventListener<T extends Event> {
-    /**
-     * The callback for events.
-     * @param event The event.
-     */
-    void onEvent(T event);
+public interface EventBus extends EventDispatcher, EventListenable {
 }

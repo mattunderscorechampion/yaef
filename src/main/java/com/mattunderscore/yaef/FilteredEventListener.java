@@ -29,22 +29,22 @@ package com.mattunderscore.yaef;
  * A listener that applies a filter.
  * @author Matt Champion on 04/02/14.
  */
-public class FilteredEventListener implements EventListener {
+public class FilteredEventListener<T extends Event> implements EventListener<T> {
     private final EventFilter filter;
-    private final EventListener listener;
+    private final EventListener<T> listener;
 
     /**
      * Create a listener that is filtered..
      * @param filter The filter to apply.
      * @param listener The listener to pass accepted events to.
      */
-    public FilteredEventListener(final EventFilter filter, final EventListener listener) {
+    public FilteredEventListener(final EventFilter filter, final EventListener<T> listener) {
         this.filter = filter;
         this.listener = listener;
     }
 
     @Override
-    public final void onEvent(final Event event) {
+    public final void onEvent(final T event) {
         if (filter.accept(event)) {
             listener.onEvent(event);
         }

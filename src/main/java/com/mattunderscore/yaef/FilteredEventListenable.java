@@ -26,13 +26,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.mattunderscore.yaef;
 
 /**
- * A listener for events.
- * @author Matt Champion on 04/02/14.
+ * @author matt on 07/02/14.
  */
-public interface EventListener<T extends Event> {
+public interface FilteredEventListenable<T extends Event> {
     /**
-     * The callback for events.
-     * @param event The event.
+     * Add a listener to the event bus.
+     * @param filter Filter to apply to listener.
+     * @param listener Listener to add.
      */
-    void onEvent(T event);
+    void addListener(EventFilter filter, EventListener<T> listener);
 }

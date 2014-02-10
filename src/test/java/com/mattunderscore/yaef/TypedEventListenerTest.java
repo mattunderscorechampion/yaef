@@ -40,8 +40,9 @@ import static org.mockito.Mockito.verify;
  * Tests for type filter.
  * @author Matt Champion on 05/02/14.
  */
+@SuppressWarnings("unchecked")
 public final class TypedEventListenerTest {
-    private EventListener mockedListener;
+    private EventListener<Event> mockedListener;
 
     @Before
     public void setUp() {

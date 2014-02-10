@@ -25,7 +25,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.mattunderscore.yaef;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -33,26 +38,25 @@ import java.util.concurrent.ConcurrentHashMap;
  * key will be included in the listeners.
  * @author matt on 06/02/14.
  */
-public final class EventTypeMapper<T> implements MutableEventMapper<Class<? extends Event>, T> {
-    private final ConcurrentHashMap<Class<?>,Collection<T>> map = new ConcurrentHashMap<>();
+public final class EventTypeMapper implements EventMapper<EventListener<Event>> {
+    private final ConcurrentHashMap<Class<? extends Event>,Collection<EventListener<Event>>> map = new ConcurrentHashMap<>();
 
-    @Override
-    public void addMapping(final Class<? extends Event> key, final T value) {
-        final Collection<T> collection = Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
-        collection.add(value);
-        final Collection<T> existingCollection = map.putIfAbsent(key, collection);
+    public <T extends Event> void addMapping(final Class<T> key, final EventListener<? super T> value) {
+        final Collection<EventListener<Event>> collection = Collections.newSetFromMap(new ConcurrentHashMap<EventListener<Event>, Boolean>());
+        collection.add((EventListener<Event>)value);
+        final Collection<EventListener<Event>> existingCollection = map.putIfAbsent(key, collection);
         if (existingCollection != null) {
-            existingCollection.add(value);
+            existingCollection.add((EventListener<Event>)value);
         }
     }
 
     @Override
-    public Collection<T> objectsForEvent(final Event event) {
+    public Collection<EventListener<Event>> objectsForEvent(final Event event) {
         final Class<? extends Event> eventClass = event.getClass();
-        final Set<T> objects = new HashSet<>();
-        final List<Class<?>> possibleKeys = getSuperTypesThatImplementEvent(eventClass);
-        for (final Class<?> key : possibleKeys) {
-            final Collection<T> typeObjects = map.get(key);
+        final Set<EventListener<Event>> objects = new HashSet<>();
+        final List<Class<? extends Event>> possibleKeys = getSuperTypesThatImplementEvent(eventClass);
+        for (final Class<? extends Event> key : possibleKeys) {
+            final Collection<EventListener<Event>> typeObjects = map.get(key);
             if (typeObjects != null) {
                 objects.addAll(typeObjects);
             }
@@ -65,24 +69,27 @@ public final class EventTypeMapper<T> implements MutableEventMapper<Class<? exte
      * @param klass The class to search from.
      * @return The list of classes.
      */
-    static List<Class<?>> getSuperTypesThatImplementEvent(final Class<? extends Event> klass) {
-        final List<Class<?>> possibleKeys = new ArrayList<>();
+    static List<Class<? extends Event>> getSuperTypesThatImplementEvent(final Class<? extends Event> klass) {
+        final List<Class<? extends Event>> possibleKeys = new ArrayList<>();
         if (isEventType(klass)) {
             addTypesToEvent(possibleKeys, klass);
         }
         return possibleKeys;
     }
 
-    private static void addTypesToEvent(final List<Class<?>> list, final Class<?> klass) {
+    @SuppressWarnings("unchecked")
+    private static void addTypesToEvent(final List<Class<? extends Event>> list, final Class<? extends Event> klass) {
         list.add(klass);
         final Class<?> superClass = klass.getSuperclass();
         if (superClass != null && isEventType(superClass)) {
-            addTypesToEvent(list, superClass);
+            // Cast must be valid if isEventType returns true
+            addTypesToEvent(list, (Class<? extends Event>)superClass);
         }
         final Class<?>[] interfaces = klass.getInterfaces();
         for (final Class<?> intFace : interfaces) {
             if (isEventType(intFace)) {
-                addTypesToEvent(list, intFace);
+                // Cast must be valid if isEventType returns true
+                addTypesToEvent(list, (Class<? extends Event>)intFace);
             }
         }
     }
@@ -90,7 +97,7 @@ public final class EventTypeMapper<T> implements MutableEventMapper<Class<? exte
     /**
      * Checks the class is a subtype of {@link Event}.
      * @param klass The class to check.
-     * @return {@@code true} iff the class is a subtype of {@link Event}.
+     * @return {@code true} iff the class is a subtype of {@link Event}.
      */
     private static boolean isEventType(final Class<?> klass) {
         return Event.class.isAssignableFrom(klass);

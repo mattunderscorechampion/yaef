@@ -29,13 +29,13 @@ package com.mattunderscore.yaef;
  * A listener that filters according to type.
  * @author Matt Champion on 04/02/14.
  */
-public final class TypedEventListener<T extends Event> extends FilteredEventListener {
+public final class TypedEventListener<T extends Event> extends FilteredEventListener<T> {
     /**
      * Create a listener that is only invoked for certain types.
      * @param type The type to filter on.
      * @param listener The listener to pass the event onto,
      */
-    public TypedEventListener(final Class<T> type, final EventListener listener) {
+    public TypedEventListener(final Class<T> type, final EventListener<T> listener) {
         super(new EventTypeFilter(type), listener);
     }
 }

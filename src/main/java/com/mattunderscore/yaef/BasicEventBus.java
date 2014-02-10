@@ -25,14 +25,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.mattunderscore.yaef;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * A listener for events.
- * @author Matt Champion on 04/02/14.
+ * Basic implementation of an event bus.
+ * @author matt on 07/02/14.
  */
-public interface EventListener<T extends Event> {
-    /**
-     * The callback for events.
-     * @param event The event.
-     */
-    void onEvent(T event);
+public class BasicEventBus implements EventBus, FilteredEventListenable<Event> {
+    private final Set<EventListener<Event>> listeners;
+
+    public BasicEventBus() {
+        listeners = new HashSet<>();
+    }
+
+    @Override
+    public void dispatch(final Event event) {
+        for(final EventListener<Event> listener : listeners) {
+            listener.onEvent(event);
+        }
+    }
+
+    @Override
+    public void addListener(final EventListener<Event> listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void addListener(final EventFilter filter, final EventListener<Event> listener) {
+        addListener(new FilteredEventListener(filter, listener));
+    }
 }

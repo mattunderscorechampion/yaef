@@ -25,14 +25,36 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.mattunderscore.yaef;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * A listener for events.
- * @author Matt Champion on 04/02/14.
+ * @author matt on 07/02/14.
  */
-public interface EventListener<T extends Event> {
+public class MappableEventDispatcher implements EventDispatcher {
+    private final Set<EventMapper<EventListener<Event>>> mappers;
+
+    public MappableEventDispatcher() {
+        mappers = new HashSet<>();
+    }
+
     /**
-     * The callback for events.
-     * @param event The event.
+     * Add a mapper to the dispatcher.
+     * @param mapper The mapper to add.
      */
-    void onEvent(T event);
+    public void addMapper(final EventMapper<EventListener<Event>> mapper) {
+        mappers.add(mapper);
+    }
+
+    @Override
+    public void dispatch(final Event event) {
+        for (final EventMapper<EventListener<Event>> mapper : mappers) {
+            final Collection<EventListener<Event>> listeners = mapper.objectsForEvent(event);
+            for (final EventListener<Event> listener : listeners) {
+                final EventListener<Event> l = listener;
+                l.onEvent(event);
+            }
+        }
+    }
 }

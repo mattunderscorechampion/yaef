@@ -26,13 +26,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.mattunderscore.yaef;
 
 /**
- * A listener for events.
- * @author Matt Champion on 04/02/14.
+ * An event dispatcher that allows events to be raised.
+ * @author matt on 07/02/14.
  */
-public interface EventListener<T extends Event> {
+public interface EventDispatcher {
     /**
-     * The callback for events.
-     * @param event The event.
+     * Dispatch an event to any listeners.
+     * @param event The event to dispatch.
      */
-    void onEvent(T event);
+    void dispatch(Event event);
 }

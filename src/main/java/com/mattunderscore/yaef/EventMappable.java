@@ -26,13 +26,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.mattunderscore.yaef;
 
 /**
- * A listener for events.
- * @author Matt Champion on 04/02/14.
+ * @author matt on 08/02/14.
  */
-public interface EventListener<T extends Event> {
+public interface EventMappable {
     /**
-     * The callback for events.
-     * @param event The event.
+     * Add a mapper.
+     * @param mapper The mapper to add.
      */
-    void onEvent(T event);
+    public void addMapper(EventMapper<EventListener<? extends Event>> mapper);
 }

@@ -23,16 +23,22 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.mattunderscore.yaef;
+package com.mattunderscore.yaef.com.mattunderscore.yaef.stubs;
+
+import com.mattunderscore.yaef.Event;
+import com.mattunderscore.yaef.EventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * A listener for events.
- * @author Matt Champion on 04/02/14.
+ * An empty listener for testing.
+ * @author matt on 08/02/14.
  */
-public interface EventListener<T extends Event> {
-    /**
-     * The callback for events.
-     * @param event The event.
-     */
-    void onEvent(T event);
+public class EmptyListener<T extends Event> implements EventListener<T> {
+    public final List<Event> events = new ArrayList<>();
+    @Override
+    public void onEvent(final T event) {
+        events.add(event);
+    }
 }
