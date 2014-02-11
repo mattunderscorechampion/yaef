@@ -39,13 +39,31 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author matt on 06/02/14.
  */
 public final class EventTypeMapper implements EventMapper<EventListener<Event>> {
-    private final ConcurrentHashMap<Class<? extends Event>,Collection<EventListener<Event>>> map = new ConcurrentHashMap<>();
+    /**
+     * This is a map of classes that extend Event to collections of event listeners.
+     */
+    private final ConcurrentHashMap<Class<? extends Event>,Collection<EventListener<Event>>> map =
+            new ConcurrentHashMap<>();
 
+    /**
+     * Add an event type mapping for a listener. The mapper will dispatch any events that match the key or a subtype of
+     * the key to the listener. The listener must accept a super type of the key class.
+     * @param key The type or super type of events that will be dispatched to the listener.
+     * @param value The listener to dispatch events to. It must accept a super type of the key.
+     * @param <T> The class of the key, must extend Event. The event listener must be invokable with a super type of
+     *           the key.
+     */
+    @SuppressWarnings("unchecked")
     public <T extends Event> void addMapping(final Class<T> key, final EventListener<? super T> value) {
-        final Collection<EventListener<Event>> collection = Collections.newSetFromMap(new ConcurrentHashMap<EventListener<Event>, Boolean>());
+        final Collection<EventListener<Event>> collection =
+                Collections.newSetFromMap(new ConcurrentHashMap<EventListener<Event>, Boolean>());
+        // An event listener must accept subtypes of Event, they can always be added to a collection of
+        // EventListener<Event>
         collection.add((EventListener<Event>)value);
         final Collection<EventListener<Event>> existingCollection = map.putIfAbsent(key, collection);
         if (existingCollection != null) {
+            // An event listener must accept subtypes of Event, they can always be added to a collection of
+            // EventListener<Event>
             existingCollection.add((EventListener<Event>)value);
         }
     }
