@@ -68,10 +68,37 @@ public final class EventTypeMapper implements EventMapper<EventListener<Event>> 
         }
     }
 
+    /**
+     * ${inheritDocs}
+     * <P>
+     *     This is not type safe. The event listeners in the collection may not be able to accept the Event. They will accept an event of the same type as it passed in.
+     * </P>
+     * @param event An event to get listeners for.
+     * @return A collection of listeners.
+     */
     @Override
     public Collection<EventListener<Event>> objectsForEvent(final Event event) {
         final Class<? extends Event> eventClass = event.getClass();
         final Set<EventListener<Event>> objects = new HashSet<>();
+        final List<Class<? extends Event>> possibleKeys = getSuperTypesThatImplementEvent(eventClass);
+        for (final Class<? extends Event> key : possibleKeys) {
+            final Collection<EventListener<Event>> typeObjects = map.get(key);
+            if (typeObjects != null) {
+                objects.addAll(typeObjects);
+            }
+        }
+        return objects;
+    }
+
+    /**
+     * A type safe alternative to objectsForEvent.
+     * @param event The event to get objects for.
+     * @param <T> The type of the event to get objects for.
+     * @return A collection of listeners that can accept the Event passed in.
+     */
+    public <T extends Event> Collection<EventListener<? super T>> listenersForEvent(final T event) {
+        final Class<? extends Event> eventClass = event.getClass();
+        final Set<EventListener<? super T>> objects = new HashSet<>();
         final List<Class<? extends Event>> possibleKeys = getSuperTypesThatImplementEvent(eventClass);
         for (final Class<? extends Event> key : possibleKeys) {
             final Collection<EventListener<Event>> typeObjects = map.get(key);
