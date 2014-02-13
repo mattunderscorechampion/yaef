@@ -33,7 +33,7 @@ import java.util.Set;
  * @author matt on 07/02/14.
  */
 public class MappableEventDispatcher implements EventDispatcher {
-    private final Set<EventMapper<EventListener<Event>>> mappers;
+    private final Set<EventMapper> mappers;
 
     public MappableEventDispatcher() {
         mappers = new HashSet<>();
@@ -43,16 +43,20 @@ public class MappableEventDispatcher implements EventDispatcher {
      * Add a mapper to the dispatcher.
      * @param mapper The mapper to add.
      */
-    public void addMapper(final EventMapper<EventListener<Event>> mapper) {
+    public void addMapper(final EventMapper mapper) {
         mappers.add(mapper);
     }
 
     @Override
     public void dispatch(final Event event) {
-        for (final EventMapper<EventListener<Event>> mapper : mappers) {
-            final Collection<EventListener<Event>> listeners = mapper.objectsForEvent(event);
-            for (final EventListener<Event> listener : listeners) {
-                final EventListener<Event> l = listener;
+        dispatchInternal(event);
+    }
+
+    private <T extends Event> void dispatchInternal(final T event) {
+        for (final EventMapper mapper : mappers) {
+            final Collection<EventListener<? super T>> listeners = mapper.listenersForEvent(event);
+            for (final EventListener<? super T> listener : listeners) {
+                final EventListener<? super T> l = listener;
                 l.onEvent(event);
             }
         }

@@ -29,11 +29,11 @@ package com.mattunderscore.yaef;
  * Allows a mapping to be added from some key to some object.
  * @author matt on 06/02/14.
  */
-public interface MutableEventMapper<S, T> extends EventMapper<T> {
+public interface MutableEventMapper extends EventMapper {
     /**
      * Add a mapping from a key to an object.
      * @param key The key to map from.
      * @param value The object to map to.
      */
-    void addMapping(S key, T value);
+    <S, T> void addMapping(S key, T value);
 }

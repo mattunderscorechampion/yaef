@@ -41,7 +41,7 @@ import static org.junit.Assert.assertTrue;
 public final class EventTypeMapperTest {
     @Test
     public void checkSuperTypesToEventForEventA() {
-        final List<Class<? extends Event>> classes = EventTypeMapper.getSuperTypesThatImplementEvent(EventA.class);
+        final List<Class<? super EventA>> classes = EventTypeMapper.getSuperTypesThatImplementEvent(EventA.class);
         assertEquals(2, classes.size());
         assertTrue(classes.contains(EventA.class));
         assertTrue(classes.contains(Event.class));
@@ -49,7 +49,7 @@ public final class EventTypeMapperTest {
 
     @Test
     public void checkSuperTypesToEventForEventB() {
-        final List<Class<? extends Event>> classes = EventTypeMapper.getSuperTypesThatImplementEvent(EventB.class);
+        final List<Class<? super EventB>> classes = EventTypeMapper.getSuperTypesThatImplementEvent(EventB.class);
         assertEquals(2, classes.size());
         assertTrue(classes.contains(EventB.class));
         assertTrue(classes.contains(Event.class));
@@ -57,7 +57,7 @@ public final class EventTypeMapperTest {
 
     @Test
     public void checkSuperTypesToEventForEventASubclass() {
-        final List<Class<? extends Event>> classes = EventTypeMapper.getSuperTypesThatImplementEvent(EventASubclass.class);
+        final List<Class<? super EventASubclass>> classes = EventTypeMapper.getSuperTypesThatImplementEvent(EventASubclass.class);
         assertEquals(3, classes.size());
         assertTrue(classes.contains(EventASubclass.class));
         assertTrue(classes.contains(EventA.class));
@@ -66,7 +66,7 @@ public final class EventTypeMapperTest {
 
     @Test
     public void checkSuperTypesToEventForInterestingEventA() {
-        final List<Class<? extends Event>> classes = EventTypeMapper.getSuperTypesThatImplementEvent(InterestingEventA.class);
+        final List<Class<? super InterestingEventA>> classes = EventTypeMapper.getSuperTypesThatImplementEvent(InterestingEventA.class);
         assertEquals(3, classes.size());
         assertTrue(classes.contains(InterestingEventA.class));
         assertTrue(classes.contains(InterestingEvent.class));
@@ -79,7 +79,7 @@ public final class EventTypeMapperTest {
         final EmptyListener<EventA> target = new EmptyListener<>();
         mapper.addMapping(EventA.class, target);
         final Event event = new EventA();
-        final Collection<EventListener<Event>> objects = mapper.objectsForEvent(event);
+        final Collection<EventListener<? super Event>> objects = mapper.listenersForEvent(event);
         assertEquals(1, objects.size());
         assertTrue(objects.contains(target));
     }
@@ -90,7 +90,7 @@ public final class EventTypeMapperTest {
         final EmptyListener<EventB> target = new EmptyListener<>();
         mapper.addMapping(EventB.class, target);
         final Event event = new EventB();
-        final Collection<EventListener<Event>> objects = mapper.objectsForEvent(event);
+        final Collection<EventListener<? super Event>> objects = mapper.listenersForEvent(event);
         assertEquals(1, objects.size());
         assertTrue(objects.contains(target));
     }
@@ -101,7 +101,7 @@ public final class EventTypeMapperTest {
         final EmptyListener<EventA> target = new EmptyListener<>();
         mapper.addMapping(EventA.class, target);
         final Event event = new EventB();
-        final Collection<EventListener<Event>> objects = mapper.objectsForEvent(event);
+        final Collection<EventListener<? super Event>> objects = mapper.listenersForEvent(event);
         assertEquals(0, objects.size());
     }
 
@@ -111,7 +111,7 @@ public final class EventTypeMapperTest {
         final EmptyListener<EventB> target = new EmptyListener<>();
         mapper.addMapping(EventB.class, target);
         final Event event = new EventA();
-        final Collection<EventListener<Event>> objects = mapper.objectsForEvent(event);
+        final Collection<EventListener<? super Event>> objects = mapper.listenersForEvent(event);
         assertEquals(0, objects.size());
     }
 
@@ -121,7 +121,7 @@ public final class EventTypeMapperTest {
         final EmptyListener<EventA> target = new EmptyListener<>();
         mapper.addMapping(EventA.class, target);
         final Event event = new EventASubclass();
-        final Collection<EventListener<Event>> objects = mapper.objectsForEvent(event);
+        final Collection<EventListener<? super Event>> objects = mapper.listenersForEvent(event);
         assertEquals(1, objects.size());
         assertTrue(objects.contains(target));
     }
@@ -134,7 +134,7 @@ public final class EventTypeMapperTest {
         mapper.addMapping(EventA.class, target0);
         mapper.addMapping(Event.class, target1);
         final Event event = new EventASubclass();
-        final Collection<EventListener<Event>> objects = mapper.objectsForEvent(event);
+        final Collection<EventListener<? super Event>> objects = mapper.listenersForEvent(event);
         assertEquals(2, objects.size());
         assertTrue(objects.contains(target0));
         assertTrue(objects.contains(target1));
@@ -152,12 +152,12 @@ public final class EventTypeMapperTest {
         final Event event0 = new EventASubclass();
         final Event event1 = new EventB();
 
-        final Collection<EventListener<Event>> objects0 = mapper.objectsForEvent(event0);
+        final Collection<EventListener<? super Event>> objects0 = mapper.listenersForEvent(event0);
         assertEquals(2, objects0.size());
         assertTrue(objects0.contains(target0));
         assertTrue(objects0.contains(target1));
 
-        final Collection<EventListener<Event>> objects1 = mapper.objectsForEvent(event1);
+        final Collection<EventListener<? super Event>> objects1 = mapper.listenersForEvent(event1);
         assertEquals(1, objects1.size());
         assertTrue(objects1.contains(target2));
     }

@@ -33,5 +33,5 @@ public interface EventMappable {
      * Add a mapper.
      * @param mapper The mapper to add.
      */
-    public void addMapper(EventMapper<EventListener<? extends Event>> mapper);
+    public void addMapper(EventMapper mapper);
 }

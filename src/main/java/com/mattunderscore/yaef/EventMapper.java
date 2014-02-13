@@ -28,16 +28,16 @@ package com.mattunderscore.yaef;
 import java.util.Collection;
 
 /**
- * Mapper for events to some object. This provides an inverse of the behaviour of filters. Instead of events that
- * do not apply being dropped only the objects that the event applies to are returned.
- * @param <T> The type of objects returned by the mapper.
+ * Mapper for events to collections of listeners. This provides an inverse of the behaviour of filters. Instead of
+ * events that do not apply being dropped only the listeners that the event applies to are returned.
  * @author matt on 05/02/14.
  */
-public interface EventMapper<T> {
+public interface EventMapper {
     /**
-     * Get the listeners that are mapped to for an event.
+     * Get the listeners that are mapped from an event.
      * @param event An event to get listeners for.
+     * @param <T> The type of events handled by listeners returned by the mapper.
      * @return A collection of listeners that can be applied to the event.
      */
-    Collection<T> objectsForEvent(Event event);
+    <T extends Event> Collection<EventListener<? super T>> listenersForEvent(T event);
 }

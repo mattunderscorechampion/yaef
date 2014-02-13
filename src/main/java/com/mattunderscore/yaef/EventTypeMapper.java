@@ -38,75 +38,47 @@ import java.util.concurrent.ConcurrentHashMap;
  * key will be included in the listeners.
  * @author matt on 06/02/14.
  */
-public final class EventTypeMapper implements EventMapper<EventListener<Event>> {
-    /**
-     * This is a map of classes that extend Event to collections of event listeners.
-     */
-    private final ConcurrentHashMap<Class<? extends Event>,Collection<EventListener<Event>>> map =
-            new ConcurrentHashMap<>();
+public final class EventTypeMapper implements EventMapper {
+    private final ClassMap map = new ClassMap();
 
     /**
      * Add an event type mapping for a listener. The mapper will dispatch any events that match the key or a subtype of
      * the key to the listener. The listener must accept a super type of the key class.
      * @param key The type or super type of events that will be dispatched to the listener.
      * @param value The listener to dispatch events to. It must accept a super type of the key.
-     * @param <T> The class of the key, must extend Event. The event listener must be invokable with a super type of
-     *           the key.
      */
-    @SuppressWarnings("unchecked")
     public <T extends Event> void addMapping(final Class<T> key, final EventListener<? super T> value) {
-        final Collection<EventListener<Event>> collection =
-                Collections.newSetFromMap(new ConcurrentHashMap<EventListener<Event>, Boolean>());
-        // An event listener must accept subtypes of Event, they can always be added to a collection of
-        // EventListener<Event>
-        collection.add((EventListener<Event>)value);
-        final Collection<EventListener<Event>> existingCollection = map.putIfAbsent(key, collection);
+        final Collection<EventListener<? super T>> collection =
+                Collections.newSetFromMap(new ConcurrentHashMap<EventListener<? super T>, Boolean>());
+        collection.add(value);
+        final Collection<EventListener<? super T>> existingCollection = map.put(key, collection);
         if (existingCollection != null) {
-            // An event listener must accept subtypes of Event, they can always be added to a collection of
-            // EventListener<Event>
-            existingCollection.add((EventListener<Event>)value);
+            existingCollection.add(value);
         }
     }
 
-    /**
-     * ${inheritDocs}
-     * <P>
-     *     This is not type safe. The event listeners in the collection may not be able to accept the Event. They will accept an event of the same type as it passed in.
-     * </P>
-     * @param event An event to get listeners for.
-     * @return A collection of listeners.
-     */
     @Override
-    public Collection<EventListener<Event>> objectsForEvent(final Event event) {
-        final Class<? extends Event> eventClass = event.getClass();
-        final Set<EventListener<Event>> objects = new HashSet<>();
-        final List<Class<? extends Event>> possibleKeys = getSuperTypesThatImplementEvent(eventClass);
-        for (final Class<? extends Event> key : possibleKeys) {
-            final Collection<EventListener<Event>> typeObjects = map.get(key);
-            if (typeObjects != null) {
-                objects.addAll(typeObjects);
-            }
-        }
+    public <T extends Event> Collection<EventListener<? super T>> listenersForEvent(final T event) {
+        final Class<T> eventClass = getClass(event);
+        final Set<EventListener<? super T>> objects = new HashSet<>();
+        final Collection<Class<? super T>> possibleKeys = getSuperTypesThatImplementEvent(eventClass);
+        addListenersForKeys(objects, possibleKeys);
         return objects;
     }
 
-    /**
-     * A type safe alternative to objectsForEvent.
-     * @param event The event to get objects for.
-     * @param <T> The type of the event to get objects for.
-     * @return A collection of listeners that can accept the Event passed in.
-     */
-    public <T extends Event> Collection<EventListener<? super T>> listenersForEvent(final T event) {
-        final Class<? extends Event> eventClass = event.getClass();
-        final Set<EventListener<? super T>> objects = new HashSet<>();
-        final List<Class<? extends Event>> possibleKeys = getSuperTypesThatImplementEvent(eventClass);
-        for (final Class<? extends Event> key : possibleKeys) {
-            final Collection<EventListener<Event>> typeObjects = map.get(key);
+    @SuppressWarnings("unchecked")
+    private <T extends Event> void addListenersForKeys(final Collection<EventListener<? super T>> listeners, final Collection<Class<? super T>> keys) {
+        for (final Class<? super T> key : keys) {
+            final Collection<EventListener<? super T>> typeObjects = map.get(key);
             if (typeObjects != null) {
-                objects.addAll(typeObjects);
+                listeners.addAll(typeObjects);
             }
         }
-        return objects;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <S> Class<S> getClass(final S object) {
+        return (Class<S>) object.getClass();
     }
 
     /**
@@ -114,8 +86,8 @@ public final class EventTypeMapper implements EventMapper<EventListener<Event>> 
      * @param klass The class to search from.
      * @return The list of classes.
      */
-    static List<Class<? extends Event>> getSuperTypesThatImplementEvent(final Class<? extends Event> klass) {
-        final List<Class<? extends Event>> possibleKeys = new ArrayList<>();
+    static <S extends Event> List<Class<? super S>> getSuperTypesThatImplementEvent(final Class<S> klass) {
+        final List<Class<? super S>> possibleKeys = new ArrayList<>();
         if (isEventType(klass)) {
             addTypesToEvent(possibleKeys, klass);
         }
@@ -123,18 +95,18 @@ public final class EventTypeMapper implements EventMapper<EventListener<Event>> 
     }
 
     @SuppressWarnings("unchecked")
-    private static void addTypesToEvent(final List<Class<? extends Event>> list, final Class<? extends Event> klass) {
+    private static <T extends Event> void addTypesToEvent(final List<Class<? super T>> list, final Class<? super T> klass) {
         list.add(klass);
         final Class<?> superClass = klass.getSuperclass();
         if (superClass != null && isEventType(superClass)) {
             // Cast must be valid if isEventType returns true
-            addTypesToEvent(list, (Class<? extends Event>)superClass);
+            addTypesToEvent(list, (Class<? super T>)superClass);
         }
         final Class<?>[] interfaces = klass.getInterfaces();
         for (final Class<?> intFace : interfaces) {
             if (isEventType(intFace)) {
                 // Cast must be valid if isEventType returns true
-                addTypesToEvent(list, (Class<? extends Event>)intFace);
+                addTypesToEvent(list, (Class<? super T>)intFace);
             }
         }
     }
@@ -146,5 +118,21 @@ public final class EventTypeMapper implements EventMapper<EventListener<Event>> 
      */
     private static boolean isEventType(final Class<?> klass) {
         return Event.class.isAssignableFrom(klass);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static class ClassMap {
+        /**
+         * This is a map of classes that extend Event to collections of event listeners.
+         */
+        private final ConcurrentHashMap map = new ConcurrentHashMap();
+
+        <T extends Event> Collection<EventListener<? super T>> put(final Class<T> type, final Collection<EventListener<? super T>> listeners) {
+            return (Collection<EventListener<? super T>>) map.putIfAbsent(type, listeners);
+        }
+
+        <T extends Event> Collection<EventListener<? super T>> get(final Class<? super T> type) {
+            return (Collection<EventListener<? super T>>) map.get(type);
+        }
     }
 }
