@@ -1,4 +1,4 @@
-/* Copyright © 2016 Matthew Champion
+package com.mattunderscore.yaef.pipeline;/* Copyright © 2016 Matthew Champion
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
