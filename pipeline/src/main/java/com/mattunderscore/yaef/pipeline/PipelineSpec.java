@@ -31,21 +31,21 @@ import java.util.function.Predicate;
  * The specification for a pipeline.
  * @author Matt Champion on 10/03/16
  */
-public interface PipelineSpec<T> {
+public interface PipelineSpec<S, T> {
     /**
      * Transform the values passed through the pipeline.
      * @param function The function performing the transformation
      * @param <R> The type of value passed on through the pipeline
      * @return The new specification for a pipeline
      */
-    <R> PipelineSpec<R> transform(Function<T, R> function);
+    <R> PipelineSpec<S, R> transform(Function<T, R> function);
 
     /**
      * Filter the values passed through the pipeline.
      * @param predicate The predicate filtering the pipeline
      * @return The new specification for a pipeline
      */
-    PipelineSpec<T> filter(Predicate<T> predicate);
+    PipelineSpec<S, T> filter(Predicate<T> predicate);
 
     /**
      * Transform or filter the values passed through the pipeline. If the {@link Optional} does not have a value the
@@ -54,5 +54,5 @@ public interface PipelineSpec<T> {
      * @param <R> The type of value passed on through the pipeline
      * @return The new specification for a pipeline
      */
-    <R> PipelineSpec<R> transformOrFilter(Function<T, Optional<R>> function);
+    <R> PipelineSpec<S, R> transformOrFilter(Function<T, Optional<R>> function);
 }
