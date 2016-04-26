@@ -46,6 +46,18 @@ import java.util.function.Predicate;
     }
 
     @Override
+    public <R, E extends Error> PipelineSpec<S, OrError<R, E>> transform(Transformer<T, R, E> function) {
+        return new BasicSpec<>(pipe.andThen(ot -> {
+            if (ot.isPresent()) {
+                return Optional.ofNullable(function.apply(ot.get()));
+            }
+            else {
+                return Optional.empty();
+            }
+        }));
+    }
+
+    @Override
     public PipelineSpec<S, T> filter(Predicate<T> predicate) {
         return new BasicSpec<>(pipe.andThen(ot -> ot.filter(predicate)));
     }

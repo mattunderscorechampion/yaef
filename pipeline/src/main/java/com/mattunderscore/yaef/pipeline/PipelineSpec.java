@@ -1,4 +1,4 @@
-package com.mattunderscore.yaef.pipeline;/* Copyright © 2016 Matthew Champion
+/* Copyright © 2016 Matthew Champion
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -23,6 +23,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
+package com.mattunderscore.yaef.pipeline;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -39,6 +41,8 @@ public interface PipelineSpec<S, T> {
      * @return The new specification for a pipeline
      */
     <R> PipelineSpec<S, R> transform(Function<T, R> function);
+
+    <R, E extends Error> PipelineSpec<S, OrError<R, E>> transform(Transformer<T, R, E> function);
 
     /**
      * Filter the values passed through the pipeline.

@@ -25,45 +25,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.mattunderscore.yaef.pipeline;
 
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 /**
- * Identity {@link PipelineSpec}. Does no processing.
- * @author Matt Champion on 18/03/16
+ * @author Matt Champion on 26/04/16
  */
-/*package*/ final class IdentitySpec<S> implements PipelineSpec<S, S> {
-    private static final IdentitySpec RAW_INSTANCE = new IdentitySpec();
+public interface OrError<V, E extends Error> {
+    void accept(Visitor<V, E> visitor);
 
-    private IdentitySpec() {
-    }
+    interface Visitor<V, E extends Error> {
+        void ok(V value);
 
-    @Override
-    public <R> PipelineSpec<S, R> transform(Function<S, R> function) {
-        return new BasicSpec<>(function.andThen(Optional::ofNullable));
-    }
-
-    @Override
-    public <R, E extends Error> PipelineSpec<S, OrError<R, E>> transform(Transformer<S, R, E> function) {
-        return new BasicSpec<>(v -> Optional.ofNullable(function.apply(v)));
-    }
-
-    @Override
-    public PipelineSpec<S, S> filter(Predicate<S> predicate) {
-        return new BasicSpec<>(s -> Optional.ofNullable(s).filter(predicate));
-    }
-
-    @Override
-    public <R> PipelineSpec<S, R> transformOrFilter(Function<S, Optional<R>> function) {
-        return new BasicSpec<>(function);
-    }
-
-    /**
-     * @param <S>
-     * @return An identity {@link PipelineSpec}.
-     */
-    public static <S> PipelineSpec<S, S> get() {
-        return RAW_INSTANCE;
+        void error(E error);
     }
 }
