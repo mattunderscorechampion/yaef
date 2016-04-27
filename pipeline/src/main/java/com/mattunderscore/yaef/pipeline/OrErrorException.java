@@ -25,55 +25,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.mattunderscore.yaef.pipeline;
 
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 /**
- * A basic {@link PipelineSpec}.
- * @author Matt Champion on 18/03/16
+ * @author Matt Champion on 27/04/16
  */
-/*package*/ final class BasicSpec<S, T> implements PipelineSpec<S, T> {
-    private final Function<S, Optional<T>> pipe;
+/*package*/ class OrErrorException<V, E extends Exception> implements OrError<V, E> {
+    private E exception;
 
-    public BasicSpec(Function<S, Optional<T>> pipe) {
-        this.pipe = pipe;
+    /*package*/ OrErrorException(E exception) {
+        this.exception = exception;
     }
 
     @Override
-    public <R> PipelineSpec<S, R> transform(Function<T, R> function) {
-        return new BasicSpec<>(pipe.andThen(ot -> ot.map(function)));
-    }
-
-    @Override
-    public <R, E extends Exception> PipelineSpec<S, OrError<R, E>> transform(Transformer<T, R, E> function) {
-
-        return new BasicSpec<>(pipe.andThen(ot -> {
-            if (!ot.isPresent()) {
-                return Optional.empty();
-            }
-
-            try {
-                final R value = function.apply(ot.get());
-                if (value == null) {
-                    return Optional.empty();
-                }
-                else {
-                    return Optional.of(new OrErrorOk<>(value));
-                }
-            } catch (Exception e) {
-                return Optional.of(new OrErrorException<>((E) e));
-            }
-        }));
-    }
-
-    @Override
-    public PipelineSpec<S, T> filter(Predicate<T> predicate) {
-        return new BasicSpec<>(pipe.andThen(ot -> ot.filter(predicate)));
-    }
-
-    @Override
-    public <R> PipelineSpec<S, R> transformOrFilter(Function<T, Optional<R>> function) {
-        return new BasicSpec<>(pipe.andThen(ot -> ot.flatMap(function)));
+    public void accept(Visitor<V, E> visitor) {
+        visitor.error(exception);
     }
 }

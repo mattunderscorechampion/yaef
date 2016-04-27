@@ -28,10 +28,10 @@ package com.mattunderscore.yaef.pipeline;
 /**
  * @author Matt Champion on 26/04/16
  */
-public interface OrError<V, E extends Error> {
+public interface OrError<V, E extends Exception> {
     void accept(Visitor<V, E> visitor);
 
-    interface Visitor<V, E extends Error> {
+    interface Visitor<V, E extends Exception> {
         void ok(V value);
 
         void error(E error);

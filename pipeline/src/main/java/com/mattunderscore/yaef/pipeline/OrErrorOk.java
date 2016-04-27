@@ -26,7 +26,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.mattunderscore.yaef.pipeline;
 
 /**
- * @author Matt Champion on 26/04/16
+ * @author Matt Champion on 27/04/16
  */
-public interface Error {
+/*package*/ final class OrErrorOk<V, E extends Exception> implements OrError<V, E> {
+    private final V value;
+
+    /*package*/ OrErrorOk(V value) {
+        this.value = value;
+    }
+
+    @Override
+    public void accept(Visitor<V, E> visitor) {
+        visitor.ok(value);
+    }
 }

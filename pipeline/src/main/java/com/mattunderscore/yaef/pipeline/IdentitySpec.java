@@ -45,8 +45,20 @@ import java.util.function.Predicate;
     }
 
     @Override
-    public <R, E extends Error> PipelineSpec<S, OrError<R, E>> transform(Transformer<S, R, E> function) {
-        return new BasicSpec<>(v -> Optional.ofNullable(function.apply(v)));
+    public <R, E extends Exception> PipelineSpec<S, OrError<R, E>> transform(Transformer<S, R, E> function) {
+        return new BasicSpec<>(v -> {
+            try {
+                final R value = function.apply(v);
+                if (value == null) {
+                    return Optional.empty();
+                }
+                else {
+                    return Optional.of(new OrErrorOk<>(value));
+                }
+            } catch (Exception e) {
+                return Optional.of(new OrErrorException<>((E) e));
+            }
+        });
     }
 
     @Override

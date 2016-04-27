@@ -42,7 +42,7 @@ public interface PipelineSpec<S, T> {
      */
     <R> PipelineSpec<S, R> transform(Function<T, R> function);
 
-    <R, E extends Error> PipelineSpec<S, OrError<R, E>> transform(Transformer<T, R, E> function);
+    <R, E extends Exception> PipelineSpec<S, OrError<R, E>> transform(Transformer<T, R, E> function);
 
     /**
      * Filter the values passed through the pipeline.
