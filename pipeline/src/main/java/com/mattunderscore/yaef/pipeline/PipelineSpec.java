@@ -1,4 +1,4 @@
-/* Copyright © 2016 Matthew Champion
+/* Copyright © 2016, 2017 Matthew Champion
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -59,4 +59,10 @@ public interface PipelineSpec<S, T> {
      * @return The new specification for a pipeline
      */
     <R> PipelineSpec<S, R> transformOrFilter(Function<T, Optional<R>> function);
+
+    /**
+     * Create a {@link DispatchablePipeline} from the spec.
+     * @return The new pipeline
+     */
+    DispatchablePipeline<S, T> createPipeline();
 }

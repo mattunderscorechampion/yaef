@@ -1,4 +1,4 @@
-/* Copyright © 2016 Matthew Champion
+/* Copyright © 2016, 2017 Matthew Champion
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,11 @@ import java.util.function.Predicate;
     @Override
     public <R> PipelineSpec<S, R> transformOrFilter(Function<S, Optional<R>> function) {
         return new BasicSpec<>(function);
+    }
+
+    @Override
+    public DispatchablePipeline<S, S> createPipeline() {
+        return new BasicDispatchablePipeline<>(Optional::ofNullable);
     }
 
     /**
